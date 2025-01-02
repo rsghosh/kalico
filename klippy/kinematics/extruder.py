@@ -86,7 +86,10 @@ class ExtruderStepper:
             self.extruder = None
             return
         extruder = self.printer.lookup_object(extruder_name, None)
-        if extruder is None or not isinstance(extruder, PrinterExtruder):
+        if extruder is None or not (
+            hasattr(extruder, "link_extruder_stepper")
+            and hasattr(extruder, "unlink_extruder_stepper")
+        ):
             raise self.printer.command_error(
                 "'%s' is not a valid extruder." % (extruder_name,)
             )
