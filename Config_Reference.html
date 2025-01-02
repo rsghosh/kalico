@@ -524,6 +524,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#configuration-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ Configuration references
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#common-kinematic-settings" class="md-nav__link">
     <span class="md-ellipsis">
       Common kinematic settings
@@ -932,7 +941,7 @@
           <li class="md-nav__item">
   <a href="#force_move" class="md-nav__link">
     <span class="md-ellipsis">
-      ⚠ [force_move]
+      ⚠️ [force_move]
     </span>
   </a>
   
@@ -1020,6 +1029,15 @@
   <a href="#lis2dw" class="md-nav__link">
     <span class="md-ellipsis">
       [lis2dw]
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lis3dh" class="md-nav__link">
+    <span class="md-ellipsis">
+      [lis3dh]
     </span>
   </a>
   
@@ -3689,6 +3707,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#configuration-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ Configuration references
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#common-kinematic-settings" class="md-nav__link">
     <span class="md-ellipsis">
       Common kinematic settings
@@ -4097,7 +4124,7 @@
           <li class="md-nav__item">
   <a href="#force_move" class="md-nav__link">
     <span class="md-ellipsis">
-      ⚠ [force_move]
+      ⚠️ [force_move]
     </span>
   </a>
   
@@ -4185,6 +4212,15 @@
   <a href="#lis2dw" class="md-nav__link">
     <span class="md-ellipsis">
       [lis2dw]
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lis3dh" class="md-nav__link">
+    <span class="md-ellipsis">
+      [lis3dh]
     </span>
   </a>
   
@@ -5337,6 +5373,7 @@
 <h1 id="configuration-reference">Configuration reference<a class="headerlink" href="#configuration-reference" title="Permanent link">&para;</a></h1>
 <p>This document is a reference for options available in the Kalico
 config file.</p>
+<p>Sections and options are marked with an ⚠️ to denote configurations that are changed from stock Klipper.</p>
 <p>The descriptions in this document are formatted so that it is possible
 to cut-and-paste them into a printer config file. See the
 <a href="Installation.html">installation document</a> for information on setting up
@@ -5453,6 +5490,9 @@ pins such as "extra_mcu:ar9" may then be used elsewhere in the config
 #   If the bed mesh should be logged at startup
 #   (helpful for keeping the log clean during development)
 #   The default is True.
+#log_velocity_limit_changes: True
+#   If changes to velocity limits should be logged. If False, velocity limits will only
+#   be logged at rollover. Some slicers emit very frequent SET_VELOCITY_LIMIT commands
 #log_shutdown_info: True
 #   If we should log detailed crash info when an exception occurs
 #   Most of it is overly-verbose and fluff and we still get a stack trace
@@ -5461,6 +5501,26 @@ pins such as "extra_mcu:ar9" may then be used elsewhere in the config
 #log_serial_reader_warnings: True
 #log_startup_info: True
 #log_webhook_method_register_messages: False
+</code></pre></div>
+
+<h2 id="configuration-references">⚠️ Configuration references<a class="headerlink" href="#configuration-references" title="Permanent link">&para;</a></h2>
+<p>In your configuration, you can reference other values to share
+configuration between multiple sections. References take the form of
+<code>${option}</code> to copy a value in the current section, or
+<code>${section.option}</code> to look up a value elsewhere in your configuration.</p>
+<p>Optionally, a <code>[constants]</code> section may be used specifically to store
+these values. Unlike the rest of your configuration, unused constants
+will show a warning instead of causing an error.</p>
+<div class="highlight"><pre><span></span><code>[constants]
+run_current_ab:  1.0
+i_am_not_used: True  # Will show &quot;Constant &#39;i_am_not_used&#39; is unused&quot;
+
+[tmc5160 stepper_x]
+run_current: ${constants.run_current_ab}
+
+[tmc5160 stepper_y]
+run_current: ${tmc5160 stepper_x.run_current}
+#   Nested references work, but are not advised
 </code></pre></div>
 
 <h2 id="common-kinematic-settings">Common kinematic settings<a class="headerlink" href="#common-kinematic-settings" title="Permanent link">&para;</a></h2>
@@ -5765,6 +5825,9 @@ radius:
 #horizontal_move_z: 5
 #   The height (in mm) that the head should be commanded to move to
 #   just prior to starting a probe operation. The default is 5.
+#use_probe_xy_offsets: False
+#   If True, apply the `[probe]` XY offsets to the probed positions. The
+#   default is False.
 </code></pre></div>
 
 <h3 id="deltesian-kinematics">Deltesian Kinematics<a class="headerlink" href="#deltesian-kinematics" title="Permanent link">&para;</a></h3>
@@ -6469,6 +6532,9 @@ toward the center of the print area.</p>
 #bed_mesh_default:
 #   Optionally provide the name of a profile you would like loaded on init.
 #   By default, no profile is loaded.
+#use_probe_xy_offsets: True
+#   If True, apply the `[probe]` XY offsets to the probed positions. The
+#   default is True.
 </code></pre></div>
 
 <h3 id="bed_tilt">[bed_tilt]<a class="headerlink" href="#bed_tilt" title="Permanent link">&para;</a></h3>
@@ -6502,6 +6568,9 @@ information.</p>
 #horizontal_move_z: 5
 #   The height (in mm) that the head should be commanded to move to
 #   just prior to starting a probe operation. The default is 5.
+#use_probe_xy_offsets: False
+#   If True, apply the `[probe]` XY offsets to the probed positions. The
+#   default is False.
 </code></pre></div>
 
 <h3 id="bed_screws">[bed_screws]<a class="headerlink" href="#bed_screws" title="Permanent link">&para;</a></h3>
@@ -6581,6 +6650,9 @@ information.</p>
 #   Default value is CW-M3 which most printers use. A clockwise
 #   rotation of the knob decreases the gap between the nozzle and the
 #   bed. Conversely, a counter-clockwise rotation increases the gap.
+#use_probe_xy_offsets: False
+#   If True, apply the `[probe]` XY offsets to the probed positions. The
+#   default is False.
 </code></pre></div>
 
 <h3 id="z_tilt">[z_tilt]<a class="headerlink" href="#z_tilt" title="Permanent link">&para;</a></h3>
@@ -6631,9 +6703,18 @@ extended <a href="G-Codes.html#z_tilt">G-Code command</a> becomes available.</p>
 #increasing_threshold: 0.0000001
 #   Sets the threshold that probe points can increase before z_tilt aborts.
 #   To disable the validation, set this parameter to a high value.
+#use_probe_xy_offsets: False
+#   If True, apply the `[probe]` XY offsets to the probed positions. The
+#   default is False.
 </code></pre></div>
 
 <h4 id="z_tilt_ng">[z_tilt_ng]<a class="headerlink" href="#z_tilt_ng" title="Permanent link">&para;</a></h4>
+<p>z_tilt's next generation, adding the Z_TILT_CALIBRATE and Z_TILT_AUTODETECT
+extended <a href="G-Codes.html#z_tilt_ng">G-Code commands</a>. Z_TILT_CALIBRATE performs multiple
+probing runs to calculate z_offsets, enabling accurate tilt adjustment with fewer
+probe points. Z_TILT_AUTODETECT automatically determines pivot positions for each
+Z stepper through iterative probing. When this section is present, these extended
+commands become available, enhancing bed leveling accuracy and calibration efficiency.</p>
 <div class="highlight"><pre><span></span><code>[z_tilt_ng]
 #z_positions:
 # See [z_tilt]. This parameter must be provided,
@@ -6660,6 +6741,8 @@ extended <a href="G-Codes.html#z_tilt">G-Code command</a> becomes available.</p>
 #retry_tolerance: 0
 # See [z_tilt]
 #increasing_threshold: 0.0000001
+# See [z_tilt]
+#use_probe_xy_offsets: False
 # See [z_tilt]
 #extra_points:
 #   A list in the same format as &quot;points&quot; above. This list contains
@@ -6745,6 +6828,9 @@ configuration:</p>
 #increasing_threshold: 0.0000001
 #   Sets the threshold that probe points can increase before qgl aborts.
 #   To disable the validation, set this parameter to a high value.
+#use_probe_xy_offsets: False
+#   If True, apply the `[probe]` XY offsets to the probed positions. The
+#   default is False.
 </code></pre></div>
 
 <h3 id="skew_correction">[skew_correction]<a class="headerlink" href="#skew_correction" title="Permanent link">&para;</a></h3>
@@ -6990,7 +7076,7 @@ file for a Marlin compatible M808 G-Code macro.</p>
 <div class="highlight"><pre><span></span><code>[sdcard_loop]
 </code></pre></div>
 
-<h3 id="force_move">⚠ [force_move]<a class="headerlink" href="#force_move" title="Permanent link">&para;</a></h3>
+<h3 id="force_move">⚠️ [force_move]<a class="headerlink" href="#force_move" title="Permanent link">&para;</a></h3>
 <p>This module is enabled by default in Kalico!</p>
 <p>Support manually moving stepper motors for diagnostic purposes. Note,
 using this feature may place the printer in an invalid state - see the
@@ -7046,7 +7132,12 @@ allowing per-filament settings and runtime tuning.</p>
 #   The vertical height by which the nozzle is lifted from the print to
 #   prevent collisions with the print during travel moves when retracted.
 #   The minimum value is 0 mm, the default value is 0 mm, which disables
-#   zhop moves.
+#   zhop moves. The value will be reduced if the zhop move reaches
+#   maximum z.
+#clear_zhop_on_z_moves: False
+#   If True, when a change in Z is sent while toolhead is retracted,
+#   z_hop is cancelled until next retraction. Otherwise,
+#   `z_hop_height` is applied as an offset to all movements.
 </code></pre></div>
 
 <h3 id="gcode_arcs">[gcode_arcs]<a class="headerlink" href="#gcode_arcs" title="Permanent link">&para;</a></h3>
@@ -7166,8 +7257,9 @@ cs_pin:
 <h3 id="lis2dw">[lis2dw]<a class="headerlink" href="#lis2dw" title="Permanent link">&para;</a></h3>
 <p>Support for LIS2DW accelerometers.</p>
 <div class="highlight"><pre><span></span><code>[lis2dw]
-cs_pin:
-#   The SPI enable pin for the sensor. This parameter must be provided.
+#cs_pin:
+#   The SPI enable pin for the sensor. This parameter must be provided
+#   if using SPI.
 #spi_speed: 5000000
 #   The SPI speed (in hz) to use when communicating with the chip.
 #   The default is 5000000.
@@ -7177,6 +7269,43 @@ cs_pin:
 #spi_software_miso_pin:
 #   See the &quot;common SPI settings&quot; section for a description of the
 #   above parameters.
+#i2c_address:
+#   Default is 25 (0x19). If SA0 is high, it would be 24 (0x18) instead.
+#i2c_mcu:
+#i2c_bus:
+#i2c_software_scl_pin:
+#i2c_software_sda_pin:
+#i2c_speed: 400000
+#   See the &quot;common I2C settings&quot; section for a description of the
+#   above parameters. The default &quot;i2c_speed&quot; is 400000.
+#axes_map: x, y, z
+#   See the &quot;adxl345&quot; section for information on this parameter.
+</code></pre></div>
+
+<h3 id="lis3dh">[lis3dh]<a class="headerlink" href="#lis3dh" title="Permanent link">&para;</a></h3>
+<p>Support for LIS3DH accelerometers.</p>
+<div class="highlight"><pre><span></span><code>[lis3dh]
+#cs_pin:
+#   The SPI enable pin for the sensor. This parameter must be provided
+#   if using SPI.
+#spi_speed: 5000000
+#   The SPI speed (in hz) to use when communicating with the chip.
+#   The default is 5000000.
+#spi_bus:
+#spi_software_sclk_pin:
+#spi_software_mosi_pin:
+#spi_software_miso_pin:
+#   See the &quot;common SPI settings&quot; section for a description of the
+#   above parameters.
+#i2c_address:
+#   Default is 25 (0x19). If SA0 is high, it would be 24 (0x18) instead.
+#i2c_mcu:
+#i2c_bus:
+#i2c_software_scl_pin:
+#i2c_software_sda_pin:
+#i2c_speed: 400000
+#   See the &quot;common I2C settings&quot; section for a description of the
+#   above parameters. The default &quot;i2c_speed&quot; is 400000.
 #axes_map: x, y, z
 #   See the &quot;adxl345&quot; section for information on this parameter.
 </code></pre></div>
@@ -8515,14 +8644,17 @@ information.</p>
 #   fan would run with 0.5 at 55°)
 #cooling_hysteresis: 0.0
 #   define the temperature hysteresis for lowering the fan speed
-#   (temperature differences to the last measured value that are lower than
-#   the hysteresis will not cause lowering of the fan speed)
+#   (in simple terms this setting offsets the fan curve when cooling down
+#   by the specified amount of degrees celsius. For example, if the
+#   hysteresis is set to 5°C, the fan curve will be moved by -5°C. This
+#   setting can be used to reduce the effects of quickly changing
+#   temperatures around a target temperature which would cause the fan to
+#   speed up and slow down repeatedly.)
 #heating_hysteresis: 0.0
 #   same as cooling_hysteresis but for increasing the fan speed, it is
 #   recommended to be left at 0 for safety reasons
 #smooth_readings: 10
-#   the amount of readings a median should be taken of to determine the fan
-#   speed at each update interval, the default is 10
+#   This parameter is deprecated and should no longer be used.
 </code></pre></div>
 
 <h3 id="fan_generic">[fan_generic]<a class="headerlink" href="#fan_generic" title="Permanent link">&para;</a></h3>
@@ -9287,15 +9419,15 @@ run_current:
 </code></pre></div>
 
 <h3 id="tmc5160">[tmc5160]<a class="headerlink" href="#tmc5160" title="Permanent link">&para;</a></h3>
-<p>Configure a TMC5160 stepper motor driver via SPI bus. To use this
-feature, define a config section with a "tmc5160" prefix followed by
-the name of the corresponding stepper config section (for example,
-"[tmc5160 stepper_x]").</p>
+<p>Configure a TMC5160 or TMC2160 stepper motor driver via SPI bus.
+To use this feature, define a config section with a "tmc5160" prefix
+followed by the name of the corresponding stepper config section
+(for example, "[tmc5160 stepper_x]").</p>
 <div class="highlight"><pre><span></span><code>[tmc5160 stepper_x]
 cs_pin:
-#   The pin corresponding to the TMC5160 chip select line. This pin
-#   will be set to low at the start of SPI messages and raised to high
-#   after the message completes. This parameter must be provided.
+#   The pin corresponding to the TMC5160 or TMC2160 chip select line.
+#   This pin will be set to low at the start of SPI messages and raised
+#   to high after the message completes. This parameter must be provided.
 #spi_speed:
 #spi_bus:
 #spi_software_sclk_pin:
@@ -9403,8 +9535,8 @@ sense_resistor:
 #driver_BBMCLKS: 4
 #driver_BBMTIME: 0
 #driver_FILT_ISENSE: 0
-#   Set the given register during the configuration of the TMC5160
-#   chip. This may be used to set custom motor parameters. The
+#   Set the given register during the configuration of the TMC5160 or
+#   TMC2160 chip. This may be used to set custom motor parameters. The
 #   defaults for each parameter are next to the parameter name in the
 #   above list.
 #⚠️driver_s2vs_level: 6   # Short to Supply tolerance, from 4 to 15
@@ -9415,9 +9547,9 @@ sense_resistor:
 #diag0_pin:
 #diag1_pin:
 #   The micro-controller pin attached to one of the DIAG lines of the
-#   TMC5160 chip. Only a single diag pin should be specified. The pin
-#   is &quot;active low&quot; and is thus normally prefaced with &quot;^!&quot;. Setting
-#   this creates a &quot;tmc5160_stepper_x:virtual_endstop&quot; virtual pin
+#   TMC5160 or TMC2160 chip. Only a single diag pin should be specified.
+#   The pin is &quot;active low&quot; and is thus normally prefaced with &quot;^!&quot;.
+#   Setting this creates a &quot;tmc5160_stepper_x:virtual_endstop&quot; virtual pin
 #   which may be used as the stepper&#39;s endstop_pin. Doing this enables
 #   &quot;sensorless homing&quot;. (Be sure to also set driver_SGT to an
 #   appropriate sensitivity value.) The default is to not enable
@@ -10540,7 +10672,7 @@ TradRack repo for additional information:</p>
 <ul>
 <li><a href="https://github.com/Annex-Engineering/TradRack/blob/main/docs/Tuning.md">Tuning.md</a>:
   document referenced by some of the config options below.</li>
-<li><a href="https://github.com/Annex-Engineering/TradRack/blob/main/docs/klipper/Config_Reference.md">Trad Rack config reference document</a>: contains info on additional config
+<li><a href="https://github.com/Annex-Engineering/TradRack/blob/main/docs/kalico/Config_Reference.md">Trad Rack config reference document</a>: contains info on additional config
   sections that are expected to be used alongside [trad_rack].</li>
 </ul>
 <div class="highlight"><pre><span></span><code>[trad_rack]
