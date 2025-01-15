@@ -1241,6 +1241,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mixing_extruder" class="md-nav__link">
+    <span class="md-ellipsis">
+      [mixing_extruder]
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4424,6 +4433,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mixing_extruder" class="md-nav__link">
+    <span class="md-ellipsis">
+      [mixing_extruder]
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5507,7 +5525,8 @@ pins such as "extra_mcu:ar9" may then be used elsewhere in the config
 <p>In your configuration, you can reference other values to share
 configuration between multiple sections. References take the form of
 <code>${option}</code> to copy a value in the current section, or
-<code>${section.option}</code> to look up a value elsewhere in your configuration.</p>
+<code>${section.option}</code> to look up a value elsewhere in your configuration. Note,
+that constants must always be lower case.</p>
 <p>Optionally, a <code>[constants]</code> section may be used specifically to store
 these values. Unlike the rest of your configuration, unused constants
 will show a warning instead of causing an error.</p>
@@ -7980,6 +7999,24 @@ printer kinematics.</p>
 #   MANUAL_STEPPER movement commands.
 </code></pre></div>
 
+<h3 id="mixing_extruder">[mixing_extruder]<a class="headerlink" href="#mixing_extruder" title="Permanent link">&para;</a></h3>
+<p>A mixing printhead which has <n>in-1out mixing nozzle. When activated
+additional G-Code Commands are available.
+See <a href="G-Codes.html#mixing_extruder">G-Codes</a> for a detailed description
+of the additional commands.</p>
+<div class="highlight"><pre><span></span><code>[mixing_extruder]
+#steppers:
+#   Which steppers feed into the hotend/nozzle. provide a comma
+#   separated list, eg. &quot;extruder,extruder1,extruder2&quot;. Should be
+#   the names of either extruder sections or extruder_stepper sections
+#   This configuration is required.
+#extruder_name:
+#   The name of the extruder to synchronize the steppers in the steppers
+#   list to.
+#   The default is the first entry in the
+#   &quot;steppers&quot; list.
+</code></pre></div>
+
 <h2 id="custom-heaters-and-sensors">Custom heaters and sensors<a class="headerlink" href="#custom-heaters-and-sensors" title="Permanent link">&para;</a></h2>
 <h3 id="verify_heater">[verify_heater]<a class="headerlink" href="#verify_heater" title="Permanent link">&para;</a></h3>
 <p>Heater and temperature sensor verification. Heater verification is
@@ -9012,7 +9049,7 @@ run_current:
 #   The amount of time (in seconds) to wait after changing homing current.
 #   The default is 0.5 seconds.
 sense_resistor:
-#   The resistance (in ohms) of the motor sense resistor. This
+#   The resistance (in ohms) of the driver sense resistor. This
 #   parameter must be provided.
 #stealthchop_threshold: 0
 #   The velocity (in mm/s) to set the &quot;stealthChop&quot; threshold to. When
@@ -9120,7 +9157,7 @@ run_current:
 #   The amount of time (in seconds) to wait after changing homing current.
 #   The default is 0.5 seconds.
 sense_resistor:
-#   The resistance (in ohms) of the motor sense resistor. This
+#   The resistance (in ohms) of the driver sense resistor. This
 #   parameter must be provided.
 #stealthchop_threshold: 0
 #   The velocity (in mm/s) to set the &quot;stealthChop&quot; threshold to. When
@@ -9240,7 +9277,7 @@ run_current:
 #   The amount of time (in seconds) to wait after changing homing current.
 #   The default is 0.5 seconds.
 sense_resistor:
-#   The resistance (in ohms) of the motor sense resistor. This
+#   The resistance (in ohms) of the driver sense resistor. This
 #   parameter must be provided.
 #idle_current_percent: 100
 #   The percentage of the run_current the stepper driver will be
@@ -9322,9 +9359,9 @@ run_current:
 #current_change_dwell_time:
 #   The amount of time (in seconds) to wait after changing homing current.
 #   The default is 0.5 seconds.
-#rref: 12000
-#   The resistance (in ohms) of the resistor between IREF and GND. The
-#   default is 12000.
+#rref:
+#   The resistance (in ohms) of the resistor between IREF and GND. This
+#   parameter must be provided.
 #stealthchop_threshold: 0
 #   The velocity (in mm/s) to set the &quot;stealthChop&quot; threshold to. When
 #   set, &quot;stealthChop&quot; mode will be enabled if the stepper motor
@@ -9459,7 +9496,7 @@ run_current:
 #   The amount of time (in seconds) to wait after changing homing current.
 #   The default is 0.5 seconds.
 sense_resistor:
-#   The resistance (in ohms) of the motor sense resistor. This
+#   The resistance (in ohms) of the driver sense resistor. This
 #   parameter must be provided.
 #stealthchop_threshold: 0
 #   The velocity (in mm/s) to set the &quot;stealthChop&quot; threshold to. When
